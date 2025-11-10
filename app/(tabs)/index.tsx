@@ -1,98 +1,139 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const menuItems = [
+    { icon: 'description', label: 'Discharge' },
+    { icon: 'calendar-today', label: 'Timetable' },
+    { icon: 'group', label: 'Group and Section' },
+    { icon: 'event', label: 'Exams Schedule' },
+    { icon: 'school', label: 'Exam Grades' },
+    { icon: 'edit', label: 'Assessment' },
+    { icon: 'pie-chart', label: 'Percentage (%)' },
+    { icon: 'folder', label: 'Academic transcripts' },
+    { icon: 'calculate', label: 'Debts' },
+    { icon: 'assignment', label: 'Academic vacation' },
+    { icon: 'mail', label: 'Enrollments' },
+    { icon: 'restaurant', label: 'Restauration' },
+    { icon: 'apps', label: 'Other services' },
+  ];
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" />
+
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        {/* PROGRES Header Card */}
+        <View style={styles.progresCard}>
+          <View style={styles.progresContent}>
+            <Text style={styles.progresTitle}>PROGRES</Text>
+            <Text style={styles.progresArabic}>
+              وزارة التعليم العالي والبحث العلمي
+            </Text>
+            <View style={styles.progresSubtitle}>
+              <Text style={styles.progresFrench}>
+                Ministère de l'Enseignement Supérieur et de la Recherche Scientifique
+              </Text>
+              <MaterialIcons name="flag" size={16} color="#FFFFFF" style={styles.flagIcon} />
+            </View>
+          </View>
+        </View>
+
+        {/* Menu Grid */}
+        <View style={styles.menuGrid}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity key={index} style={styles.menuButton}>
+              <MaterialIcons name={item.icon as any} size={24} color="#FFFFFF" />
+              <Text style={styles.menuButtonText}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 130,
+    flexGrow: 1,
+  },
+  progresCard: {
+    backgroundColor: '#019577',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    marginTop: 0,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  progresContent: {
+    alignItems: 'center',
+  },
+  progresTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 6,
+  },
+  progresArabic: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  progresSubtitle: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  progresFrench: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  flagIcon: {
+    marginLeft: 4,
+  },
+  menuGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  menuButton: {
+    width: '48%',
+    backgroundColor: '#019577',
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 75,
+    gap: 6,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  menuButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });
