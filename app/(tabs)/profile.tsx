@@ -96,8 +96,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#000',
+    fontFamily: 'Cairo',
   },
   scrollView: {
     flex: 1,
@@ -145,13 +146,16 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#FFFFFF',
     marginBottom: 4,
+    fontFamily: 'Cairo',
   },
   profileUniversity: {
     fontSize: 14,
+    fontWeight: '600',
     color: '#FFFFFF',
+    fontFamily: 'Cairo',
   },
   detailCard: {
     backgroundColor: '#FFFFFF',
@@ -174,11 +178,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginBottom: 4,
+    fontWeight: '600',
+    fontFamily: 'Cairo',
   },
   detailValue: {
     fontSize: 16,
     color: '#000',
-    fontWeight: '500',
+    fontWeight: '700',
+    fontFamily: 'Cairo',
   },
   languageButton: {
     borderWidth: 1,
@@ -191,7 +198,8 @@ const styles = StyleSheet.create({
   languageButtonText: {
     color: '#000',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '700',
+    fontFamily: 'Cairo',
   },
   logoutButton: {
     backgroundColor: '#E53935',
@@ -204,8 +212,9 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '800',
     letterSpacing: 1,
+    fontFamily: 'Cairo',
   },
 });
 

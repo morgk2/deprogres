@@ -13,6 +13,19 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Image as ExpoImage } from 'expo-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const FLIP_DURATION = 180;
+const DRAG_DISTANCE_FOR_FULL_FLIP = 140; // pixels
+const FLIP_THRESHOLD_DEGREES = 135; // 75% of 180 degrees
+
+function normalizeRotation(value: number): number {
+  'worklet';
+  let normalized = ((value % 360) + 360) % 360;
+  if (normalized >= 180) {
+    normalized -= 360;
+  }
+  return normalized;
+}
+
 const CardFace = ({ cardImage }: { cardImage: string | null }) => (
   <View style={styles.cardInner}>
     {cardImage ? (
@@ -36,7 +49,6 @@ const CardFace = ({ cardImage }: { cardImage: string | null }) => (
 
 export default function CardsScreen() {
   const rotateY = useSharedValue(0);
-  const isFlipped = useSharedValue(0);
   const startRotation = useSharedValue(0);
   const [cardImage, setCardImage] = useState<string | null>(null);
 
@@ -59,88 +71,82 @@ export default function CardsScreen() {
     }, [loadCardImage])
   );
 
-  const flipCard = () => {
+  const flipCard = (direction: 1 | -1 = 1) => {
     'worklet';
-    const newValue = isFlipped.value === 0 ? 1 : 0;
-    isFlipped.value = newValue;
-    rotateY.value = withTiming(newValue * 180, {
-      duration: 400,
-      easing: Easing.inOut(Easing.ease),
-    });
+    const current = normalizeRotation(rotateY.value);
+    const targetRaw = current + direction * 180;
+    const normalizedTarget = normalizeRotation(targetRaw);
+
+    rotateY.value = current;
+    rotateY.value = withTiming(
+      targetRaw,
+      {
+        duration: FLIP_DURATION,
+        easing: Easing.inOut(Easing.ease),
+      },
+      (finished) => {
+        if (finished) {
+          rotateY.value = normalizedTarget;
+        }
+      }
+    );
   };
 
   const panGesture = Gesture.Pan()
     .onStart(() => {
       'worklet';
-      startRotation.value = rotateY.value;
+      const normalized = normalizeRotation(rotateY.value);
+      rotateY.value = normalized;
+      startRotation.value = normalized;
     })
     .onUpdate((event) => {
       'worklet';
-      // Convert translation to rotation (-180 to 180 range based on drag)
-      // Reduced distance for easier flipping
-      const dragRotation = (event.translationX / 200) * 180;
+      const dragRotation = (event.translationX / DRAG_DISTANCE_FOR_FULL_FLIP) * 180;
       rotateY.value = startRotation.value + dragRotation;
     })
     .onEnd((event) => {
       'worklet';
       const currentRotation = rotateY.value;
       const rotationDelta = currentRotation - startRotation.value;
+      const velocityContribution = (event.velocityX / 1000) * 45; // degrees
+      const effectiveDelta = rotationDelta + velocityContribution;
+
+      // Always complete the flip in the direction they were swiping
+      // Use a small threshold to determine direction (even tiny swipes should flip)
+      const direction: 1 | -1 = effectiveDelta >= 0 ? 1 : -1;
+      const targetRotation = startRotation.value + direction * 180;
+      const normalizedTarget = normalizeRotation(targetRotation);
       
-      if (isFlipped.value === 0) {
-        // Currently showing front (0 degrees)
-        // Check if we've rotated enough in either direction
-        if (rotationDelta > 90 || rotationDelta < -90) {
-          // Complete flip to back
-          isFlipped.value = 1;
-          rotateY.value = withTiming(180, {
-            duration: 300,
-            easing: Easing.out(Easing.ease),
-          });
-        } else {
-          // Snap back to front
-          rotateY.value = withTiming(0, {
-            duration: 300,
-            easing: Easing.out(Easing.ease),
-          });
+      rotateY.value = withTiming(
+        targetRotation,
+        {
+          duration: FLIP_DURATION,
+          easing: Easing.out(Easing.ease),
+        },
+        (finished) => {
+          if (finished) {
+            rotateY.value = normalizedTarget;
+            startRotation.value = normalizedTarget;
+          }
         }
-      } else {
-        // Currently showing back (180 degrees)
-        // Check if we've rotated enough in either direction
-        if (rotationDelta > 90 || rotationDelta < -90) {
-          // Complete flip to front
-          isFlipped.value = 0;
-          rotateY.value = withTiming(0, {
-            duration: 300,
-            easing: Easing.out(Easing.ease),
-          });
-        } else {
-          // Snap back to back
-          rotateY.value = withTiming(180, {
-            duration: 300,
-            easing: Easing.out(Easing.ease),
-          });
-        }
-      }
+      );
     });
 
   const tapGesture = Gesture.Tap().onEnd(() => {
     'worklet';
-    flipCard();
+    flipCard(1);
   });
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
-    const rotation = rotateY.value;
-    
-    // Calculate opacity based on rotation angle
-    // Front is visible from -90 to 90 degrees
-    const normalizedRotation = ((rotation % 360) + 360) % 360;
-    const opacity = normalizedRotation > 90 && normalizedRotation < 270 ? 0 : 1;
+    const rawRotation = rotateY.value;
+    const normalized = normalizeRotation(rawRotation);
+    const opacity = Math.abs(normalized) >= 90 ? 0 : 1;
 
     return {
       transform: [
         { perspective: 1000 },
-        { rotateY: `${rotation}deg` }
+        { rotateY: `${rawRotation}deg` },
       ],
       opacity,
     };
@@ -148,17 +154,15 @@ export default function CardsScreen() {
 
   const backAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
-    const rotation = rotateY.value + 180;
-    
-    // Calculate opacity based on rotation angle
-    // Back is visible from 90 to 270 degrees (relative to front)
-    const normalizedRotation = ((rotateY.value % 360) + 360) % 360;
-    const opacity = normalizedRotation > 90 && normalizedRotation < 270 ? 1 : 0;
+    const baseRotation = rotateY.value;
+    const normalizedFront = normalizeRotation(baseRotation);
+    const opacity = Math.abs(normalizedFront) >= 90 ? 1 : 0;
+    const backRotation = normalizeRotation(baseRotation + 180);
 
     return {
       transform: [
         { perspective: 1000 },
-        { rotateY: `${rotation}deg` }
+        { rotateY: `${backRotation}deg` },
       ],
       opacity,
     };
@@ -170,7 +174,7 @@ export default function CardsScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>ID:Cards</Text>
+        <Text style={styles.headerTitle}>ID Cards</Text>
       </View>
 
       <View style={styles.content}>
@@ -204,8 +208,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#000',
+    fontFamily: 'Cairo',
   },
   content: {
     flex: 1,

@@ -33,9 +33,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#D7D7D7",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#D7D7D7"
           }
         }
       ]
@@ -43,6 +43,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "fonts": [
+      "./assets/fonts/Cairo-VariableFont_slnt,wght.ttf"
+    ]
   }
 }

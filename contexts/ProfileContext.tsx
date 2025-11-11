@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface ProfileData {
   firstName: string;
   lastName: string;
+  arabicFirstName?: string;
+  arabicLastName?: string;
   dateOfBirth: string;
   placeOfBirth: string;
   university: string;
@@ -21,6 +23,8 @@ interface ProfileContextType {
 const defaultProfile: ProfileData = {
   firstName: 'DENDOUGA',
   lastName: 'Abdelmoumene',
+  arabicFirstName: '',
+  arabicLastName: '',
   dateOfBirth: '2004-09-13',
   placeOfBirth: 'Batna-Batna',
   university: 'université de batna 1',
@@ -45,7 +49,13 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       const stored = await AsyncStorage.getItem('profile');
       if (stored) {
         const parsed = JSON.parse(stored);
-        setProfile(parsed);
+        // Ensure new fields exist for backward compatibility
+        setProfile({
+          ...defaultProfile,
+          ...parsed,
+          arabicFirstName: parsed.arabicFirstName || parsed.latinFirstName || '',
+          arabicLastName: parsed.arabicLastName || parsed.latinLastName || '',
+        });
       }
     } catch (error) {
       console.error('Error loading profile:', error);

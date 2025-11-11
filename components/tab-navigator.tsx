@@ -21,14 +21,15 @@ export function TabNavigator() {
   const getTabIndex = (route: string): number => {
     if (route === '/' || route === '/(tabs)' || route.includes('/index') || route === '/(tabs)/') return 0;
     if (route.includes('/cards')) return 1;
-    if (route.includes('/profile') && !route.includes('/edit-profile')) return 2;
-    return previousIndex.current; // Keep previous index for edit-profile
+    if (route.includes('/profile') && !route.includes('/edit-profile') && !route.includes('/advanced-card-generation')) return 2;
+    return previousIndex.current; // Keep previous index for edit-profile and advanced-card-generation
   };
 
   const isEditProfile = pathname.includes('/edit-profile');
+  const isAdvancedCardGeneration = pathname.includes('/advanced-card-generation');
 
   useEffect(() => {
-    if (!isEditProfile) {
+    if (!isEditProfile && !isAdvancedCardGeneration) {
       const newIndex = getTabIndex(pathname);
       if (newIndex !== previousIndex.current && newIndex >= 0 && newIndex <= 2) {
         const targetX = -newIndex * SCREEN_WIDTH;
@@ -41,16 +42,16 @@ export function TabNavigator() {
         previousIndex.current = newIndex;
       }
     }
-  }, [pathname, isEditProfile]);
+  }, [pathname, isEditProfile, isAdvancedCardGeneration]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateX.value }],
-      opacity: isEditProfile ? 0 : 1,
+      opacity: isEditProfile || isAdvancedCardGeneration ? 0 : 1,
     };
   });
 
-  if (isEditProfile) {
+  if (isEditProfile || isAdvancedCardGeneration) {
     return null;
   }
 

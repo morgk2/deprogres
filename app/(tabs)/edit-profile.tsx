@@ -15,6 +15,8 @@ export default function EditProfileScreen() {
   
   const [firstName, setFirstName] = useState(profile.firstName);
   const [lastName, setLastName] = useState(profile.lastName);
+  const [arabicFirstName, setArabicFirstName] = useState(profile.arabicFirstName || '');
+  const [arabicLastName, setArabicLastName] = useState(profile.arabicLastName || '');
   const [dateOfBirth, setDateOfBirth] = useState(profile.dateOfBirth);
   const [placeOfBirth, setPlaceOfBirth] = useState(profile.placeOfBirth);
   const [university, setUniversity] = useState(profile.university);
@@ -26,6 +28,8 @@ export default function EditProfileScreen() {
   useEffect(() => {
     setFirstName(profile.firstName);
     setLastName(profile.lastName);
+    setArabicFirstName(profile.arabicFirstName || '');
+    setArabicLastName(profile.arabicLastName || '');
     setDateOfBirth(profile.dateOfBirth);
     setPlaceOfBirth(profile.placeOfBirth);
     setUniversity(profile.university);
@@ -113,19 +117,29 @@ export default function EditProfileScreen() {
     }
   };
 
+  const handleAdvancedCardGeneration = () => {
+    router.push('/(tabs)/advanced-card-generation');
+  };
+
   const handleSave = async () => {
-    await updateProfile({
-      firstName,
-      lastName,
-      dateOfBirth,
-      placeOfBirth,
-      university,
-      major,
-      branch,
-      academicYear,
-      profilePicture,
-    });
-    router.back();
+    try {
+      await updateProfile({
+        firstName,
+        lastName,
+        arabicFirstName,
+        arabicLastName,
+        dateOfBirth,
+        placeOfBirth,
+        university,
+        major,
+        branch,
+        academicYear,
+        profilePicture,
+      });
+      Alert.alert('Success', 'Profile saved successfully!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save profile. Please try again.');
+    }
   };
 
   const handleInputFocus = (event: any, inputIndex: number) => {
@@ -204,6 +218,18 @@ export default function EditProfileScreen() {
         </View>
 
         <View style={styles.inputGroup}>
+          <Text style={styles.label}>Arabic First Name</Text>
+          <TextInput
+            style={styles.input}
+            value={arabicFirstName}
+            onChangeText={setArabicFirstName}
+            placeholder="Enter Arabic first name"
+            placeholderTextColor="#999"
+            onFocus={(e) => handleInputFocus(e, 1)}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
           <Text style={styles.label}>Last Name</Text>
           <TextInput
             style={styles.input}
@@ -211,7 +237,19 @@ export default function EditProfileScreen() {
             onChangeText={setLastName}
             placeholder="Enter last name"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 1)}
+            onFocus={(e) => handleInputFocus(e, 2)}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Arabic Last Name</Text>
+          <TextInput
+            style={styles.input}
+            value={arabicLastName}
+            onChangeText={setArabicLastName}
+            placeholder="Enter Arabic last name"
+            placeholderTextColor="#999"
+            onFocus={(e) => handleInputFocus(e, 3)}
           />
         </View>
 
@@ -223,7 +261,7 @@ export default function EditProfileScreen() {
             onChangeText={setDateOfBirth}
             placeholder="YYYY-MM-DD"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 2)}
+            onFocus={(e) => handleInputFocus(e, 4)}
           />
         </View>
 
@@ -235,7 +273,7 @@ export default function EditProfileScreen() {
             onChangeText={setPlaceOfBirth}
             placeholder="Enter place of birth"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 3)}
+            onFocus={(e) => handleInputFocus(e, 5)}
           />
         </View>
 
@@ -247,7 +285,7 @@ export default function EditProfileScreen() {
             onChangeText={setUniversity}
             placeholder="Enter university"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 4)}
+            onFocus={(e) => handleInputFocus(e, 6)}
           />
         </View>
 
@@ -259,7 +297,7 @@ export default function EditProfileScreen() {
             onChangeText={setMajor}
             placeholder="Enter major"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 5)}
+            onFocus={(e) => handleInputFocus(e, 7)}
           />
         </View>
 
@@ -271,7 +309,7 @@ export default function EditProfileScreen() {
             onChangeText={setBranch}
             placeholder="Enter branch"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 6)}
+            onFocus={(e) => handleInputFocus(e, 8)}
           />
         </View>
 
@@ -283,13 +321,21 @@ export default function EditProfileScreen() {
             onChangeText={setAcademicYear}
             placeholder="Enter academic year"
             placeholderTextColor="#999"
-            onFocus={(e) => handleInputFocus(e, 7)}
+            onFocus={(e) => handleInputFocus(e, 9)}
           />
         </View>
 
         <TouchableOpacity style={styles.importCardButton} onPress={handleImportCard}>
           <MaterialIcons name="credit-card" size={20} color="#019577" />
           <Text style={styles.importCardButtonText}>Import Card</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.advancedCardButton} onPress={handleAdvancedCardGeneration}>
+          <MaterialIcons name="auto-awesome" size={20} color="#019577" />
+          <View style={styles.advancedCardButtonTextContainer}>
+            <Text style={styles.advancedCardButtonText}>Advanced Card Generation</Text>
+            <Text style={styles.recommendedText}>(recommended)</Text>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -322,10 +368,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#000',
     flex: 1,
     textAlign: 'center',
+    fontFamily: 'Cairo',
   },
   placeholder: {
     width: 40,
@@ -346,10 +393,11 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#000',
     marginBottom: 16,
     alignSelf: 'flex-start',
+    fontFamily: 'Cairo',
   },
   profilePictureContainer: {
     alignItems: 'center',
@@ -379,6 +427,8 @@ const styles = StyleSheet.create({
   profilePicturePlaceholderText: {
     fontSize: 12,
     color: '#999',
+    fontWeight: '600',
+    fontFamily: 'Cairo',
   },
   editIconContainer: {
     position: 'absolute',
@@ -405,7 +455,8 @@ const styles = StyleSheet.create({
   removeButtonText: {
     color: '#E53935',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '700',
+    fontFamily: 'Cairo',
   },
   inputGroup: {
     marginBottom: 20,
@@ -429,14 +480,51 @@ const styles = StyleSheet.create({
   },
   importCardButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#019577',
+    fontFamily: 'Cairo',
+  },
+  advancedCardButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#019577',
+    gap: 8,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  advancedCardButtonTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  advancedCardButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#019577',
+    fontFamily: 'Cairo',
+  },
+  recommendedText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#019577',
+    fontStyle: 'italic',
+    fontFamily: 'Cairo',
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#000',
     marginBottom: 8,
+    fontFamily: 'Cairo',
   },
   input: {
     backgroundColor: '#FFFFFF',
@@ -451,6 +539,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
+    fontWeight: '600',
+    fontFamily: 'Cairo',
   },
   saveButton: {
     backgroundColor: '#019577',
@@ -469,8 +559,9 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '800',
     letterSpacing: 1,
+    fontFamily: 'Cairo',
   },
 });
 

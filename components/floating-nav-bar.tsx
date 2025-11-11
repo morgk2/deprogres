@@ -52,8 +52,8 @@ export function FloatingNavBar() {
     };
   });
 
-  // Hide nav bar on edit-profile page
-  if (pathname.includes('/edit-profile')) {
+  // Hide nav bar on edit-profile and advanced-card-generation pages
+  if (pathname.includes('/edit-profile') || pathname.includes('/advanced-card-generation')) {
     return null;
   }
 
@@ -147,8 +147,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 11,
     marginTop: 2,
-    fontWeight: '500',
+    fontWeight: '700',
     zIndex: 1,
+    fontFamily: 'Cairo',
   },
 });
 

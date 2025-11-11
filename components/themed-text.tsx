@@ -37,24 +37,31 @@ const styles = StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
+    fontWeight: '600',
+    fontFamily: 'Cairo',
   },
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    fontWeight: '700',
+    fontFamily: 'Cairo',
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '800',
     lineHeight: 32,
+    fontFamily: 'Cairo',
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontFamily: 'Cairo',
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
     color: '#0a7ea4',
+    fontWeight: '600',
+    fontFamily: 'Cairo',
   },
 });

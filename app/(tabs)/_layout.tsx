@@ -17,7 +17,8 @@ export default function TabLayout() {
         <Tabs.Screen name="index" />
         <Tabs.Screen name="cards" />
         <Tabs.Screen name="profile" />
-        <Tabs.Screen name="edit-profile" />
+        <Tabs.Screen name="edit-profile" options={{ presentation: 'card' }} />
+        <Tabs.Screen name="advanced-card-generation" options={{ presentation: 'card' }} />
       </Tabs>
       <TabNavigator />
       <FloatingNavBar />

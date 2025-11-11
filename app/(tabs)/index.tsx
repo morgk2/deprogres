@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ImageBackground } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import bannerImage from '@/assets/images/banner.png';
 
 export default function HomeScreen() {
   const menuItems = [
@@ -26,20 +27,12 @@ export default function HomeScreen() {
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* PROGRES Header Card */}
-        <View style={styles.progresCard}>
-          <View style={styles.progresContent}>
-            <Text style={styles.progresTitle}>PROGRES</Text>
-            <Text style={styles.progresArabic}>
-              وزارة التعليم العالي والبحث العلمي
-            </Text>
-            <View style={styles.progresSubtitle}>
-              <Text style={styles.progresFrench}>
-                Ministère de l'Enseignement Supérieur et de la Recherche Scientifique
-              </Text>
-              <MaterialIcons name="flag" size={16} color="#FFFFFF" style={styles.flagIcon} />
-            </View>
-          </View>
-        </View>
+        <ImageBackground 
+          source={bannerImage} 
+          style={styles.progresCard}
+          imageStyle={styles.progresCardImage}
+          resizeMode="cover"
+        />
 
         {/* Menu Grid */}
         <View style={styles.menuGrid}>
@@ -70,9 +63,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   progresCard: {
-    backgroundColor: '#019577',
     borderRadius: 12,
-    padding: 16,
     marginBottom: 16,
     marginTop: 0,
     elevation: 2,
@@ -80,34 +71,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    overflow: 'hidden',
+    minHeight: 120,
   },
-  progresContent: {
-    alignItems: 'center',
-  },
-  progresTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  progresArabic: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  progresSubtitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  progresFrench: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  flagIcon: {
-    marginLeft: 4,
+  progresCardImage: {
+    borderRadius: 12,
   },
   menuGrid: {
     flexDirection: 'row',
@@ -134,6 +102,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '700',
+    fontFamily: 'Cairo',
   },
 });
